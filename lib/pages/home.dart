@@ -1,4 +1,5 @@
 import 'package:chatapp/models/usermodels.dart';
+import 'package:chatapp/pages/serachpasge.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,20 +18,29 @@ class _MyhomeState extends State<Myhome> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.blue,
         automaticallyImplyLeading: false,
         centerTitle: true,
-        title: const Text('Home'),
-        actions: [
-          ElevatedButton(
-              onPressed: () {
-                FirebaseAuth.instance.signOut();
-                Navigator.of(context).pop();
-              },
-              child: const Text("LogOut"))
-        ],
+        title: const Text(
+          'Home',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
-      body: Container(
-        color: Colors.amber,
+      body: SafeArea(child: Container()),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => SerachPage(
+                      firebaseuser: widget.firbaseuser,
+                      userModel: widget.usermodel)));
+        },
+        backgroundColor: Colors.blue,
+        child: const Icon(
+          Icons.search,
+          color: Colors.white,
+        ),
       ),
     );
   }
