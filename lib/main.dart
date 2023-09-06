@@ -6,7 +6,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:chatapp/pages/loginpage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
+var uuid = Uuid();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -16,6 +18,7 @@ void main() async {
     UserModel? theusermodel =
         await FireBaseHelper.getUserModelId(curentuser.uid);
     runApp(MyLogedIn(firebaseuser: curentuser, userModel: theusermodel!));
+    // runApp(const LogInPage());
   } else {
     runApp(const MyApp());
   }

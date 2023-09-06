@@ -1,4 +1,5 @@
 import 'package:chatapp/models/usermodels.dart';
+import 'package:chatapp/pages/loginpage.dart';
 import 'package:chatapp/pages/serachpasge.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:flutter/cupertino.dart';
@@ -21,6 +22,17 @@ class _MyhomeState extends State<Myhome> {
         backgroundColor: Colors.blue,
         automaticallyImplyLeading: false,
         centerTitle: true,
+        actions: [
+          ElevatedButton(
+              onPressed: () {
+                FirebaseAuth.instance.signOut();
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: ((context) => const LogInPage())));
+              },
+              child: const Text("Logout"))
+        ],
         title: const Text(
           'Home',
           style: TextStyle(color: Colors.white),

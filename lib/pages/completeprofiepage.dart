@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:chatapp/models/usermodels.dart';
+import 'package:chatapp/pages/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -157,8 +158,12 @@ class _CompleteProfileState extends State<CompleteProfile> {
               ElevatedButton(
                 onPressed: () {
                   checkValue();
-                  // Navigator.pushReplacement(context,
-                  //     MaterialPageRoute(builder: (context) =>  Myhome()));
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Myhome(
+                              firbaseuser: widget.firebaseuser!,
+                              usermodel: widget.userModel!)));
                 },
                 style: const ButtonStyle(
                     backgroundColor: MaterialStatePropertyAll(Colors.blue)),

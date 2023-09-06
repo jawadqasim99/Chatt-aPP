@@ -1,8 +1,20 @@
 // import 'package:flutter/cupertino.dart';
+import 'package:chatapp/models/chatroommodel.dart';
+import 'package:chatapp/models/usermodels.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class ChatAppRoom extends StatefulWidget {
-  const ChatAppRoom({super.key});
+  final UserModel targetUser;
+  final ChatRoomModel chatroom;
+  final UserModel userModel;
+  final User firebaseuser;
+  const ChatAppRoom(
+      {super.key,
+      required this.chatroom,
+      required this.firebaseuser,
+      required this.targetUser,
+      required this.userModel});
 
   @override
   State<ChatAppRoom> createState() => _ChatAppRoomState();

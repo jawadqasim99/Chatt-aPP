@@ -1,3 +1,7 @@
+import 'dart:math';
+
+import 'package:chatapp/main.dart';
+import 'package:chatapp/models/chatroommodel.dart';
 import 'package:chatapp/models/usermodels.dart';
 import 'package:chatapp/pages/chatapproom.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,6 +20,36 @@ class SerachPage extends StatefulWidget {
 
 class _SerachPageState extends State<SerachPage> {
   TextEditingController searchUserData = TextEditingController();
+  ChatRoomModel? chatroom;
+  Future<ChatRoomModel?> getChatRoomModal(UserModel targetuser) async {
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection("chatrooms")
+        .where("perticipents.${widget.userModel.uid}", isEqualTo: true)
+        .where("perticipents.${targetuser.uid}", isEqualTo: true)
+        .get();
+    if (snapshot.docs.length > 0) {
+      var doc = snapshot.docs[0].data();
+      ChatRoomModel extinguser =
+          ChatRoomModel.toFrom(doc as Map<String, dynamic>);
+      chatroom = extinguser;
+    } else {
+      ChatRoomModel chatRoomModel = ChatRoomModel(
+          chatroomid: uuid.v1(),
+          lastmsg: "",
+          perticipent: {
+            widget.userModel.uid.toString(): true,
+            targetuser.uid.toString(): true
+          });
+
+      await FirebaseFirestore.instance
+          .collection("chatrooms")
+          .doc(chatRoomModel.chatroomid)
+          .set(chatRoomModel.toMap());
+      print("newchatrrom");
+    }
+    return chatroom;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,11 +109,23 @@ class _SerachPageState extends State<SerachPage> {
                             serachUser.docs[0].data() as Map<String, dynamic>;
                         UserModel searchedUser = UserModel.fromMap(usermap);
                         return ListTile(
-                          onTap: () {
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const ChatAppRoom()));
+                          onTap: () async {
+                            ChatRoomModel? chatroom =
+                                await getChatRoomModal(searchedUser);
+                            if (chatroom != null) {
+                              // ignore: use_build_context_synchronously
+                              Navigator.pushReplacement(context,
+                                  MaterialPageRoute(builder: (context) {
+                                return ChatAppRoom(
+                                  targetUser: searchedUser,
+                                  firebaseuser: widget.firebaseuser,
+                                  userModel: widget.userModel,
+                                  chatroom: chatroom,
+                                );
+                              }));
+                            } else {
+                              print('chat room error');
+                            }
                           },
                           leading: CircleAvatar(
                             backgroundImage:
@@ -87,7 +133,7 @@ class _SerachPageState extends State<SerachPage> {
                           ),
                           title: Text(searchedUser.fullname!),
                           subtitle: Text(searchedUser.email!),
-                          trailing: Icon(Icons.keyboard_arrow_right),
+                          trailing: const Icon(Icons.keyboard_arrow_right),
                         );
                       } else {
                         return const Text("User Not found");
