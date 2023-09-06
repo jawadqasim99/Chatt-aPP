@@ -3,7 +3,7 @@ class ChatRoomModel {
   Map<String, dynamic>? perticipent;
   String? lastmsg;
   ChatRoomModel({this.chatroomid, this.perticipent, this.lastmsg});
-  ChatRoomModel.toFrom(Map<String, dynamic> map) {
+  ChatRoomModel.fromMap(Map<String, dynamic> map) {
     chatroomid = map['chatroomid'];
     perticipent = map['perticipent'];
     lastmsg = map['lastmsg'];
@@ -12,7 +12,7 @@ class ChatRoomModel {
     return {
       'chatroomid': chatroomid,
       "perticipent": perticipent,
-      "lasrmsg": lastmsg
+      "lastmsg": lastmsg,
     };
   }
 }

@@ -4,11 +4,11 @@ class MessageModel {
   String? msgid;
   String? sender;
   String? text;
-  Bool? seen;
+  bool? seen;
   DateTime? createon;
 
   MessageModel({this.sender, this.createon, this.seen, this.text, this.msgid});
-  MessageModel.toFrom(Map<String, dynamic> map) {
+  MessageModel.fromMap(Map<String, dynamic> map) {
     sender = map['sender'];
     text = map['text'];
     seen = map['seen'];

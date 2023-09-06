@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:chatapp/main.dart';
 import 'package:chatapp/models/chatroommodel.dart';
 import 'package:chatapp/models/usermodels.dart';
@@ -20,18 +18,20 @@ class SerachPage extends StatefulWidget {
 
 class _SerachPageState extends State<SerachPage> {
   TextEditingController searchUserData = TextEditingController();
-  ChatRoomModel? chatroom;
+  ChatRoomModel? chatRoomUser;
   Future<ChatRoomModel?> getChatRoomModal(UserModel targetuser) async {
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection("chatrooms")
         .where("perticipents.${widget.userModel.uid}", isEqualTo: true)
         .where("perticipents.${targetuser.uid}", isEqualTo: true)
         .get();
-    if (snapshot.docs.length > 0) {
+    if (snapshot.docs.isNotEmpty) {
       var doc = snapshot.docs[0].data();
       ChatRoomModel extinguser =
-          ChatRoomModel.toFrom(doc as Map<String, dynamic>);
-      chatroom = extinguser;
+          ChatRoomModel.fromMap(doc as Map<String, dynamic>);
+      chatRoomUser = extinguser;
+      // ignore: avoid_print
+      print("already");
     } else {
       ChatRoomModel chatRoomModel = ChatRoomModel(
           chatroomid: uuid.v1(),
@@ -45,9 +45,11 @@ class _SerachPageState extends State<SerachPage> {
           .collection("chatrooms")
           .doc(chatRoomModel.chatroomid)
           .set(chatRoomModel.toMap());
+      chatRoomUser = chatRoomModel;
+      // ignore: avoid_print
       print("newchatrrom");
     }
-    return chatroom;
+    return chatRoomUser;
   }
 
   @override
@@ -114,17 +116,17 @@ class _SerachPageState extends State<SerachPage> {
                                 await getChatRoomModal(searchedUser);
                             if (chatroom != null) {
                               // ignore: use_build_context_synchronously
-                              Navigator.pushReplacement(context,
-                                  MaterialPageRoute(builder: (context) {
-                                return ChatAppRoom(
-                                  targetUser: searchedUser,
-                                  firebaseuser: widget.firebaseuser,
-                                  userModel: widget.userModel,
-                                  chatroom: chatroom,
-                                );
-                              }));
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ChatAppRoom(
+                                          chatroom: chatroom,
+                                          firebaseuser: widget.firebaseuser,
+                                          targetUser: searchedUser,
+                                          userModel: widget.userModel)));
                             } else {
-                              print('chat room error');
+                              // ignore: avoid_print
+                              print("error");
                             }
                           },
                           leading: CircleAvatar(
