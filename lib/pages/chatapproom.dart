@@ -44,8 +44,11 @@ class _ChatAppRoomState extends State<ChatAppRoom> {
           .doc(messageModel.msgid)
           .set(messageModel.toMap());
       print("send message!");
-    } else {
-      print("error is a ${userMsg}");
+      widget.chatroom.lastmsg = userMsg;
+      FirebaseFirestore.instance
+          .collection("chatrooms")
+          .doc(widget.chatroom.chatroomid)
+          .set(widget.chatroom.toMap());
     }
   }
 
@@ -79,37 +82,71 @@ class _ChatAppRoomState extends State<ChatAppRoom> {
                 Expanded(
                     child: Container(
                   child: StreamBuilder(
-                    stream: FirebaseFirestore.instance
-                        .collection("chatrooms")
-                        .doc(widget.chatroom.chatroomid)
-                        .collection("messages")
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.active) {
-                        if (snapshot.hasData) {
-                          QuerySnapshot querySnapshot =
-                              snapshot.data as QuerySnapshot;
-                          return ListView.builder(
-                            itemBuilder: (context, index) {
-                              MessageModel messageModel = MessageModel.fromMap(
-                                  querySnapshot.docs[index].data()
-                                      as Map<String, dynamic>);
-                              return Text(messageModel.text.toString());
-                            },
-                            itemCount: querySnapshot.docs.length,
-                          );
-                        } else if (snapshot.hasError) {
+                      stream: FirebaseFirestore.instance
+                          .collection("chatrooms")
+                          .doc(widget.chatroom.chatroomid)
+                          .collection("messages")
+                          .orderBy('createon', descending: true)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.active) {
+                          if (snapshot.hasData) {
+                            QuerySnapshot querySnapshot =
+                                snapshot.data as QuerySnapshot;
+                            return ListView.builder(
+                              reverse: true,
+                              itemBuilder: (context, index) {
+                                MessageModel messageModel =
+                                    MessageModel.fromMap(
+                                        querySnapshot.docs[index].data()
+                                            as Map<String, dynamic>);
+                                return Row(
+                                  mainAxisAlignment: (messageModel.sender ==
+                                          widget.userModel.uid)
+                                      ? MainAxisAlignment.end
+                                      : MainAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: 3, horizontal: 10),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 6, vertical: 8),
+                                        decoration: BoxDecoration(
+                                            color: (messageModel.sender ==
+                                                    widget.userModel.uid)
+                                                ? Colors.grey
+                                                : Colors.blue,
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                                    Radius.circular(5))),
+                                        child: Text(
+                                          messageModel.text.toString(),
+                                          style: const TextStyle(
+                                              fontSize: 17,
+                                              color: Colors.white),
+                                        )),
+                                  ],
+                                );
+                              },
+                              itemCount: querySnapshot.docs.length,
+                            );
+                          } else if (snapshot.hasError) {
+                            return const Center(
+                              child: Text(
+                                  "Error accoured plz check inter connection."),
+                            );
+                          } else {
+                            return const Center(
+                              child: Text("Say hi to your new friend"),
+                            );
+                          }
+                        } else {
                           return const Center(
-                            child: Text("Say another friend to hi!"),
+                            child: CircularProgressIndicator(),
                           );
                         }
-                      } else {
-                        return const Center(
-                          child: Text("Say another friend to hi!"),
-                        );
-                      }
-                    },
-                  ),
+                      }),
                 )),
                 Container(
                   color: Colors.grey[200],

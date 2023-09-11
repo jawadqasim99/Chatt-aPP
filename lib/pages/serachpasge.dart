@@ -22,8 +22,8 @@ class _SerachPageState extends State<SerachPage> {
   Future<ChatRoomModel?> getChatRoomModal(UserModel targetuser) async {
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection("chatrooms")
-        .where("perticipents.${widget.userModel.uid}", isEqualTo: true)
-        .where("perticipents.${targetuser.uid}", isEqualTo: true)
+        .where("perticipent.${widget.userModel.uid}", isEqualTo: true)
+        .where("perticipent.${targetuser.uid}", isEqualTo: true)
         .get();
     if (snapshot.docs.isNotEmpty) {
       var doc = snapshot.docs[0].data();

@@ -1,4 +1,5 @@
 import 'package:chatapp/models/usermodels.dart';
+import 'package:chatapp/pages/home.dart';
 import 'package:chatapp/pages/signuppage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -44,6 +45,10 @@ class _LogInPageState extends State<LogInPage> {
           UserModel.fromMap(snapshot.data() as Map<String, dynamic>);
       // ignore: avoid_print
       print("Login Successfully!!");
+      // ignore: use_build_context_synchronously
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
+        return Myhome(usermodel: userModel, firbaseuser: credential!.user!);
+      }));
       // ignore: avoid_print
     }
   }

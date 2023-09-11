@@ -23,15 +23,17 @@ class _MyhomeState extends State<Myhome> {
         automaticallyImplyLeading: false,
         centerTitle: true,
         actions: [
-          ElevatedButton(
+          IconButton(
               onPressed: () {
                 FirebaseAuth.instance.signOut();
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: ((context) => const LogInPage())));
+                Navigator.popUntil(context, (route) => route.isFirst);
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => const LogInPage()));
               },
-              child: const Text("Logout"))
+              icon: const Icon(
+                Icons.logout,
+                color: Colors.white,
+              ))
         ],
         title: const Text(
           'Home',
