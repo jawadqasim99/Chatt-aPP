@@ -39,7 +39,9 @@ class _SerachPageState extends State<SerachPage> {
           perticipent: {
             widget.userModel.uid.toString(): true,
             targetuser.uid.toString(): true
-          });
+          },
+          users: [widget.userModel.uid.toString(), targetuser.uid.toString()],
+          createon: DateTime.now());
 
       await FirebaseFirestore.instance
           .collection("chatrooms")

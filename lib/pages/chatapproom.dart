@@ -43,6 +43,7 @@ class _ChatAppRoomState extends State<ChatAppRoom> {
           .collection("messages")
           .doc(messageModel.msgid)
           .set(messageModel.toMap());
+      // ignore: avoid_print
       print("send message!");
       widget.chatroom.lastmsg = userMsg;
       FirebaseFirestore.instance
@@ -80,74 +81,72 @@ class _ChatAppRoomState extends State<ChatAppRoom> {
             child: Column(
               children: [
                 Expanded(
-                    child: Container(
-                  child: StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection("chatrooms")
-                          .doc(widget.chatroom.chatroomid)
-                          .collection("messages")
-                          .orderBy('createon', descending: true)
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.active) {
-                          if (snapshot.hasData) {
-                            QuerySnapshot querySnapshot =
-                                snapshot.data as QuerySnapshot;
-                            return ListView.builder(
-                              reverse: true,
-                              itemBuilder: (context, index) {
-                                MessageModel messageModel =
-                                    MessageModel.fromMap(
-                                        querySnapshot.docs[index].data()
-                                            as Map<String, dynamic>);
-                                return Row(
-                                  mainAxisAlignment: (messageModel.sender ==
-                                          widget.userModel.uid)
-                                      ? MainAxisAlignment.end
-                                      : MainAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                        margin: const EdgeInsets.symmetric(
-                                            vertical: 3, horizontal: 10),
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 6, vertical: 8),
-                                        decoration: BoxDecoration(
-                                            color: (messageModel.sender ==
-                                                    widget.userModel.uid)
-                                                ? Colors.grey
-                                                : Colors.blue,
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                                    Radius.circular(5))),
-                                        child: Text(
-                                          messageModel.text.toString(),
-                                          style: const TextStyle(
-                                              fontSize: 17,
-                                              color: Colors.white),
-                                        )),
-                                  ],
-                                );
-                              },
-                              itemCount: querySnapshot.docs.length,
-                            );
-                          } else if (snapshot.hasError) {
-                            return const Center(
-                              child: Text(
-                                  "Error accoured plz check inter connection."),
-                            );
+                    child: StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection("chatrooms")
+                            .doc(widget.chatroom.chatroomid)
+                            .collection("messages")
+                            .orderBy('createon', descending: true)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.active) {
+                            if (snapshot.hasData) {
+                              QuerySnapshot querySnapshot =
+                                  snapshot.data as QuerySnapshot;
+                              return ListView.builder(
+                                reverse: true,
+                                itemBuilder: (context, index) {
+                                  MessageModel messageModel =
+                                      MessageModel.fromMap(
+                                          querySnapshot.docs[index].data()
+                                              as Map<String, dynamic>);
+                                  return Row(
+                                    mainAxisAlignment: (messageModel.sender ==
+                                            widget.userModel.uid)
+                                        ? MainAxisAlignment.end
+                                        : MainAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              vertical: 3, horizontal: 10),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 6, vertical: 8),
+                                          decoration: BoxDecoration(
+                                              color: (messageModel.sender ==
+                                                      widget.userModel.uid)
+                                                  ? Colors.grey
+                                                  : Colors.blue,
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                      Radius.circular(5))),
+                                          child: Text(
+                                            messageModel.text.toString(),
+                                            style: const TextStyle(
+                                                fontSize: 17,
+                                                color: Colors.white),
+                                          )),
+                                    ],
+                                  );
+                                },
+                                itemCount: querySnapshot.docs.length,
+                              );
+                            } else if (snapshot.hasError) {
+                              return const Center(
+                                child: Text(
+                                    "Error accoured plz check inter connection."),
+                              );
+                            } else {
+                              return const Center(
+                                child: Text("Say hi to your new friend"),
+                              );
+                            }
                           } else {
                             return const Center(
-                              child: Text("Say hi to your new friend"),
+                              child: CircularProgressIndicator(),
                             );
                           }
-                        } else {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                      }),
-                )),
+                        })),
                 Container(
                   color: Colors.grey[200],
                   padding:

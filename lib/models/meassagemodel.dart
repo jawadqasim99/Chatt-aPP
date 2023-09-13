@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 class MessageModel {
   String? msgid;
   String? sender;
