@@ -1,3 +1,4 @@
+import 'package:chatapp/models/uihelper.dart';
 import 'package:chatapp/models/usermodels.dart';
 import 'package:chatapp/pages/home.dart';
 import 'package:chatapp/pages/signuppage.dart';
@@ -20,7 +21,9 @@ class _LogInPageState extends State<LogInPage> {
     String pass = password.text.trim();
     if (eamilvalue == '' || pass == '') {
       // ignore: avoid_print
-      print("Plz Fill Filed!");
+
+      UIHelper.showAlertDailog(
+          context, 'Incomplete Data', 'Plz fill all the fields');
     } else {
       logIn(eamilvalue, pass);
     }
@@ -28,12 +31,15 @@ class _LogInPageState extends State<LogInPage> {
 
   void logIn(String email, String password) async {
     UserCredential? credential;
+    UIHelper.showLoadingDailog(context, "Loading...");
     try {
       credential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
     } on FirebaseAuthException catch (e) {
-      // ignore: avoid_print
-      print(e.message.toString());
+      // ignore: use_build_context_synchronously
+      Navigator.pop(context);
+      // ignore: avoid_print, use_build_context_synchronously
+      UIHelper.showAlertDailog(context, 'Error Accourd', e.message.toString());
     }
     if (credential != null) {
       String uid = credential.user!.uid;

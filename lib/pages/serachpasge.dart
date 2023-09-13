@@ -18,6 +18,7 @@ class SerachPage extends StatefulWidget {
 
 class _SerachPageState extends State<SerachPage> {
   TextEditingController searchUserData = TextEditingController();
+
   ChatRoomModel? chatRoomUser;
   Future<ChatRoomModel?> getChatRoomModal(UserModel targetuser) async {
     QuerySnapshot snapshot = await FirebaseFirestore.instance
@@ -30,8 +31,6 @@ class _SerachPageState extends State<SerachPage> {
       ChatRoomModel extinguser =
           ChatRoomModel.fromMap(doc as Map<String, dynamic>);
       chatRoomUser = extinguser;
-      // ignore: avoid_print
-      print("already");
     } else {
       ChatRoomModel chatRoomModel = ChatRoomModel(
           chatroomid: uuid.v1(),
@@ -48,8 +47,6 @@ class _SerachPageState extends State<SerachPage> {
           .doc(chatRoomModel.chatroomid)
           .set(chatRoomModel.toMap());
       chatRoomUser = chatRoomModel;
-      // ignore: avoid_print
-      print("newchatrrom");
     }
     return chatRoomUser;
   }
@@ -101,7 +98,7 @@ class _SerachPageState extends State<SerachPage> {
             StreamBuilder(
                 stream: FirebaseFirestore.instance
                     .collection('users')
-                    .where('email', isEqualTo: searchUserData.text)
+                    .where('email', isEqualTo: searchUserData.text.trim())
                     .where('email', isNotEqualTo: widget.userModel.email)
                     .snapshots(),
                 builder: (context, snapshot) {

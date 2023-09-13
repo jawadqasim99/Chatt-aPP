@@ -3,6 +3,7 @@
 
 // import 'package:chatapp/pages/completeprofiepage.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
+import 'package:chatapp/models/uihelper.dart';
 import 'package:chatapp/models/usermodels.dart';
 import 'package:chatapp/pages/completeprofiepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -33,10 +34,11 @@ class _SignupPageState extends State<SignupPage> {
     String cpassword = conpass.text.trim();
     if (emaildata == "" || password == "" || cpassword == "") {
       // ignore: avoid_print
-      print("Plz Fill all the field!");
+      UIHelper.showAlertDailog(
+          context, 'Incomplete Data', 'Plz fill all the fields');
     } else if (password != cpassword) {
-      // ignore: avoid_print
-      print("Passwrod didnot match!");
+      UIHelper.showAlertDailog(
+          context, 'Password Mismatch', 'The password enter do not match!');
     } else {
       signUp(emaildata, password);
     }
@@ -44,12 +46,15 @@ class _SignupPageState extends State<SignupPage> {
 
   void signUp(String email, String password) async {
     UserCredential? userCredential;
+    UIHelper.showLoadingDailog(context, 'Creating new account...');
     try {
       userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
     } on FirebaseAuthException catch (e) {
-      // ignore: avoid_print
-      print(e.code.toString());
+      // ignore: use_build_context_synchronously
+      Navigator.pop(context);
+      // ignore: avoid_print, use_build_context_synchronously
+      UIHelper.showAlertDailog(context, 'Error Accoured', e.message.toString());
     }
 
     if (userCredential != null) {

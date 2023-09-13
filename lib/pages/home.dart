@@ -53,9 +53,7 @@ class _MyhomeState extends State<Myhome> {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.active) {
-                  print('data');
                   if (snapshot.hasData) {
-                    print("helo data mil gya");
                     QuerySnapshot querySnapshot =
                         snapshot.data as QuerySnapshot;
                     // print(querySnapshot.docs.length);

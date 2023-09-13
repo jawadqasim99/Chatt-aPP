@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:chatapp/models/uihelper.dart';
 import 'package:chatapp/models/usermodels.dart';
 import 'package:chatapp/pages/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -76,14 +77,15 @@ class _CompleteProfileState extends State<CompleteProfile> {
   void checkValue() {
     String fullnameuser = fullname.text.trim();
     if (fullnameuser == '' || imagefile == null) {
-      // ignore: avoid_print
-      print("Plz Fill Filed");
+      UIHelper.showAlertDailog(context, "Incomplete Data",
+          "Plz fill all the fields and upload a profile picture");
     } else {
       uploadImage();
     }
   }
 
   void uploadImage() async {
+    UIHelper.showLoadingDailog(context, "Loading...");
     UploadTask uploadTask = FirebaseStorage.instance
         .ref("ProfilePicimage")
         .child(widget.userModel!.uid.toString())
@@ -100,11 +102,19 @@ class _CompleteProfileState extends State<CompleteProfile> {
         .collection("users")
         .doc(widget.userModel!.uid)
         .set(widget.userModel!.toMap());
+    // ignore: use_build_context_synchronously
 
-    // ignore: avoid_print
-    print("UploadTask!!");
     fullname.clear();
     imagefile = null;
+    // ignore: use_build_context_synchronously
+    Navigator.popUntil(context, (route) => route.isFirst);
+    // ignore: use_build_context_synchronously
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => Myhome(
+                firbaseuser: widget.firebaseuser!,
+                usermodel: widget.userModel!)));
   }
 
   @override
@@ -158,12 +168,6 @@ class _CompleteProfileState extends State<CompleteProfile> {
               ElevatedButton(
                 onPressed: () {
                   checkValue();
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Myhome(
-                              firbaseuser: widget.firebaseuser!,
-                              usermodel: widget.userModel!)));
                 },
                 style: const ButtonStyle(
                     backgroundColor: MaterialStatePropertyAll(Colors.blue)),
